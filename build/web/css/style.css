@@ -205,7 +205,7 @@ body .article h1 {
   border: 1px solid white;
 }
 .form .submit.recover {
-  background: #FF2B4B;
+  background: #FF2B4B !important;
   color: white !important;
   border: 1px solid white !important;
   transition: all 400ms linear;
@@ -272,4 +272,13 @@ body .article h1 {
     position: relative;
     border: solid;
     border-width:1px
+}
+.myparagraph {
+   white-space: nowrap;
+   width: 20em;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+.center {
+    
 }

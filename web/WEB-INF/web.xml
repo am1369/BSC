@@ -5,6 +5,10 @@
         <servlet-class>com.example.web.Authservlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Student</servlet-name>
+        <servlet-class>com.example.web.ServletStudent</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>com.example.web.LogoutServlet</servlet-class>
     </servlet>
@@ -13,12 +17,16 @@
         <servlet-class>com.example.web.Teacher</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>StudentServlet</servlet-name>
-        <servlet-class>com.example.web.Student</servlet-class>
+        <servlet-name>Update</servlet-name>
+        <servlet-class>com.example.web.Update</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/login.do</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Student</servlet-name>
+        <url-pattern>/do.student</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
@@ -29,8 +37,8 @@
         <url-pattern>/teacher.do</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>StudentServlet</servlet-name>
-        <url-pattern>/student.do</url-pattern>
+        <servlet-name>Update</servlet-name>
+        <url-pattern>/do.update</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -38,10 +46,22 @@
         </session-timeout>
     </session-config>
     <jsp-config>
-    <jsp-property-group>
-        <url-pattern>*.jsp</url-pattern>
-        <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
     </jsp-config>
+    <filter>
+    <filter-name>CharsetFilter</filter-name>
+    <filter-class>fi.foo.filters.CharsetFilter</filter-class>
+      <init-param>
+        <param-name>requestEncoding</param-name>
+        <param-value>UTF-8</param-value>
+      </init-param>
+  </filter>
 
+  <filter-mapping>
+    <filter-name>CharsetFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

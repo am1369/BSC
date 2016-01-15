@@ -1,8 +1,9 @@
 <%-- 
-    Document   : response
+    Document   : student
     Created on : Dec 17, 2015
     Author     : kosmima
 --%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%@ page import ="java.sql.*" %>
 <%@ page import ="javax.sql.*" %>
@@ -11,7 +12,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,12 +60,10 @@
                     if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
                 }
             }
-           //ResultSet rs1 = (ResultSet) request.getAttribute("rs1");
            String username=(String) session.getAttribute("username");
            ResultSet rs = (ResultSet) request.getAttribute("rs");
            
       %>
-      
     <sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
               url="jdbc:mysql://localhost/bscfinder_db"
               user="root"  password="k0sm1m@6256"/>
@@ -94,293 +92,197 @@
           SELECT * from projects
           GROUP BY TName
     </sql:query>
-    <h2 align="center" style="font-size: 250%; font-family: 'Raleway'; color:white;">Welcome,<%=user%></h2>
-          <%
-                          String updateCheck=(String) request.getAttribute("update");
-                          if(null!=updateCheck) {
-                      %>
-                      <div align=center class="animated shake"><%=updateCheck%></div>
-                      <%
-                          }
-                          //updateCheck=null;
-                      %>
-              
+          <%String updateCheck=(String) session.getAttribute("update");%>
+    
     <div class="container">
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="response.jsp"><strong>Profile</strong></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="logout.do">Log out <span class="sr-only">(current)</span></a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+    </div>
+    <div class="container">  
         <section style="padding-bottom: 50px; padding-top: 50px;">
             <div class="row">
+                <br>
+                <h2 align="center" style="font-size: 250%; font-family: 'Raleway'; color:white;">Welcome,<%=user%></h2>
+                <br>
                 <div class="col-md-4">
-                    <img src="css/assets/img/blank-avatar.png" class="img-rounded img-responsive" />
+                    <img src="css/assets/img/blank-avatar1.png" class="img-rounded img-responsive" />
                     <br />
                     <br />
-                   <!-- 
-                    <label>Registered Username</label>
-                    <input type="text" class="form-control" placeholder="Demouser">
-                    <label>Registered Name</label>
-                    <input type="text" class="form-control" placeholder="Jhon Deo">
-                    <label>Registered Email</label>
-                    <input type="text" class="form-control" placeholder="jnondeao@gmail.com">
-                    <br>
-                    <a href="#" class="btn btn-success">Update Details</a>
-                   -->
-                    <br /><br/>
+                    <h3 style="color: white;">Search for the project you want</h3>
+                    <br />
+                        <form action=" nextjsp.jsp" method="get">
+                            <table style="border-collapse: separate; border-spacing: 15px;">
+                                <tr>
+                                    <td><select name="select_type" class="selectpicker">
+                                    <option value="none" selected='true'>Select Type</option>
+
+                                    <c:forEach var="row1" items="${result1.rows}">
+                                        <c:choose>
+                                            <c:when test="${row1.Type==0}">
+
+                                                <option value="${row1.Type}"> ΔΙΠΛΩΜΑΤΙΚΗ</option>
+                                            </c:when>
+                                            <c:when test="${row1.Type==1}">
+
+                                                <option value="${row1.Type}"> ΜΕΤΑΠΤΥΧΙΑΚH</option>
+                                            </c:when>
+                                            <c:when test="${row1.Type==2}">
+
+                                                <option value="${row1.Type}"> ΔΙΔΑΚΤΟΡΙΚH</option>
+                                            </c:when>
+                                        </c:choose>
+
+                                    </c:forEach>
+                                        </select></td>
+                                        <td><select name="select_year">
+                                    <option value="none" selected='true'>Select Year</option>
+                                    <c:forEach var="row1" items="${result2.rows}">
+                                            <option value="${row1.Year}">${row1.Year}</option>
+                                    </c:forEach>
+                                            </select></td>
+                                </tr>
+                                <tr>
+                                            <td><select name="select_department">
+                                    <option value="none" selected='true'>Select Department</option>
+                                    <c:forEach var="row1" items="${result3.rows}">
+                                            <option value="${row1.Department}">${row1.Department}</option>
+                                    </c:forEach>
+                                                </select></td>
+                                                <td><select name="select_tname">
+                                    <option value="none" selected='true'>Select Teacher</option>
+                                    <c:forEach var="row1" items="${result4.rows}">
+                                            <option value="${row1.TName}">${row1.TName}</option>
+                                    </c:forEach>
+                                                    </select></td>
+                                </tr>
+                                <tr>
+                                    <td><button type="submit" class="btn btn-success submit">Submit</button></td>
+                                </tr>
+                            </table>
+                        </form>
+                        
+                        <br>
                 </div>
+                <form action="edit.jsp" method="post">
                 <div class="col-md-8">
                     <div class="alert alert-info">
                         <h2>Profile </h2>
                         <h4>Your info are: </h4>
                         <table>
-                                <c:forEach var="row" items="${result.rows}">
+                               <c:forEach var="row" items="${result.rows}">
                                     <tr>
                                         <c:choose>
-                                            <c:when test="${row.username==''}">
-                                                <td>Username: -- </td>
+                                            <c:when test="${not empty row.name}">
+                                                <td><strong>Name:</strong> ${row.name}</td>
                                             </c:when> 
                                             <c:otherwise>
-                                                <td>Username: ${row.username}</td>
+                                                <td><strong>Name:</strong> -- </td>
                                             </c:otherwise>
                                         </c:choose>
 
                                     </tr>
                                     <tr>
                                         <c:choose>
-                                            <c:when test="${row.affiliation==''}">
-                                                <td>Type: -- </td>
+                                            <c:when test="${not empty row.username}">
+                                                <td><strong>Username:</strong> ${row.username}</td>
                                             </c:when> 
                                             <c:otherwise>
-                                                <td>Type: ${row.affiliation}</td>
+                                                <td><strong>Username:</strong> -- </td>
                                             </c:otherwise>
                                         </c:choose>
 
                                     </tr>
                                     <tr>
                                         <c:choose>
-                                            <c:when test="${row.email==''}">
-                                                <td>Mail: -- </td>
+                                            <c:when test="${not empty row.email}">
+                                                <td><strong>Mail:</strong> ${row.email}</td>
                                             </c:when> 
                                             <c:otherwise>
-                                                <td>Mail: ${row.email}</td>
+                                                <td><strong>Mail:</strong> -- </td>
                                             </c:otherwise>
                                         </c:choose>
                                     </tr>
+                                    <tr>
+                                        <c:choose>
+                                            <c:when test="${not empty row.department}">
+                                                <td><strong>Department:</strong> ${row.department}</td>
+                                            </c:when> 
+                                            <c:otherwise>
+                                                <td><strong>Department:</strong> -- </td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </tr>
+                                    <tr>
+                                        <c:choose>
+                                            <c:when test="${not empty row.year}">
+                                                <td><strong>Year of starting your courses:</strong> ${row.year}</td>
+                                            </c:when> 
+                                            <c:otherwise>
+                                                <td><strong>Year of starting your courses:</strong> -- </td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </tr>
+                                    <tr>
+                                        <c:choose>
+                                            <c:when test="${not empty row.affiliation}">
+                                                <td><strong>Activity:</strong> ${row.affiliation}</td>
+                                            </c:when> 
+                                            <c:otherwise>
+                                                <td><strong>Activity:</strong> -- </td>
+                                            </c:otherwise>
+                                        </c:choose>
 
+                                    </tr>
                                 </c:forEach>
                             </table>
+                        <%if(null!=updateCheck) { updateCheck="UPDATED";%>
+                            <div style="color: red;"><h5><%=updateCheck%></h5></div>
+                        <%}else{ updateCheck="NOT UPDATED";%>
+                            <div style="color: red;"><h5><%=updateCheck%></h5></div>
+                       <%}%>
                     </div>
-                    
+                    <button class="btn btn-success submit" type="submit" >Update profile</button>
+                </div>
+                </form>
                     <div class="form-group col-md-8">
-                        <h3>Search for the project you want</h3>
-                        <br />
                         
-                        <form action=" nextjsp.jsp" method="get">
-                           
-                            <select name="select_type" class="selectpicker">
-                                <option value="none" selected='true'>Select Type</option>
-    
-                                <c:forEach var="row1" items="${result1.rows}">
-                                    <c:choose>
-                                        <c:when test="${row1.Type==0}">
-
-                                            <option value="${row1.Type}"> ΔΙΠΛΩΜΑΤΙΚΗ</option>
-                                        </c:when>
-                                        <c:when test="${row1.Type==1}">
-
-                                            <option value="${row1.Type}"> ΜΕΤΑΠΤΥΧΙΑΚH</option>
-                                        </c:when>
-                                        <c:when test="${row1.Type==2}">
-
-                                            <option value="${row1.Type}"> ΔΙΔΑΚΤΟΡΙΚH</option>
-                                        </c:when>
-                                    </c:choose>
-
-                                </c:forEach>
-                            </select>
-                            <select name="select_year">
-                                <option value="none" selected='true'>Select Year</option>
-                                <c:forEach var="row1" items="${result2.rows}">
-                                        <option value="${row1.Year}">${row1.Year}</option>
-                                </c:forEach>
-                            </select> 
-                            <select name="select_department">
-                                <option value="none" selected='true'>Select Department</option>
-                                <c:forEach var="row1" items="${result3.rows}">
-                                        <option value="${row1.Department}">${row1.Department}</option>
-                                </c:forEach>
-                            </select>
-                            <select name="select_tname">
-                                <option value="none" selected='true'>Select a Teacher</option>
-                                <c:forEach var="row1" items="${result4.rows}">
-                                        <option value="${row1.TName}">${row1.TName}</option>
-                                </c:forEach>
-                            </select>  
-
-                            <br><br><br><br>    
-                            <button type="submit" class="submit">Submit</button>    
-                        </form>
-                        <a href="edit.jsp" class="btn btn-warning">Edit</a>
-                        <br>
-                        <form action="logout.do" method="get">
+                        <%--<form action="logout.do" method="get">
                             <button type="submit" class="submit">Log out</button>
                             <br>
-                            
-                        </form>
-                        
-                        <!--<label>Enter Old Password</label>
-                        <input type="password" class="form-control">
-                        <label>Enter New Password</label>
-                        <input type="password" class="form-control">
-                        <label>Confirm New Password</label>
-                        <input type="password" class="form-control" />
-                        <br>
-                        <a href="#" class="btn btn-warning">Change Password</a>-->
-                        
-                    </div>
+                        </form>--%>
                 </div>
             </div>
             <!-- ROW END -->
         </section>
         <!-- SECTION END -->
     </div>
+    <footer class="footer" style="color: graytext;">
+        <div class="container">
+        <p class="pull-right"><a href="#" style="color: white;">Back to top</a></p>
+        <p class="text-muted">&copy; 2016 WWW-University of Thessaly &middot; <a href="#" style="color: white;">Kosmidou Maria</a></p>
+        </div>
+    </footer>
     <!-- CONATINER END -->
-                      
-                      
-
-                      
-                    <%--  <div class="form">
-                              <div class="forceColor"></div>
-                              <div class="topbar">
-                                  <h2 align="center" style="font-size: 250%;color: white;"><strong>Your info are:</strong></h2>
-                                  <%--<div class ="normal">
-                                  <table>
-                                      <tbody>
+    <!-- REQUIRED SCRIPTS FILES -->
+        <!-- CORE JQUERY FILE -->
+        <script src="css/assets/js/jquery-1.11.1.js"></script>
+        <!-- REQUIRED BOOTSTRAP SCRIPTS -->
+        <script src="css/assets/js/bootstrap.js"></script>
 
 
-                                 <tr>
-                                 <td>Username:<%=user%></td>
-                             </tr>
-                             <tr>
-                                  <br>
-                                  <td>Name: <%=name%></td>
-                                  </tr>
-                                  <tr>
-                                  <br>
-                                  <td>Mail: <%=mail%></td>
-          </tr>
-          <tr>
-                                  <br>
-                                  <td>Type: <%=affil%></td>
-          </tr>
-
-
-
-                             </tbody>
-                                  </table>
-          </div>--%><%--
-                              <div class="normal">
-                                  <table>
-                             <c:forEach var="row" items="${result.rows}">
-                                 <tr>
-                                     <c:choose>
-                                         <c:when test="${row.username==''}">
-                                             <td>Username: -- </td>
-                                         </c:when> 
-                                         <c:otherwise>
-                                             <td>Username: ${row.username}</td>
-                                         </c:otherwise>
-                                     </c:choose>
-
-                                 </tr>
-                                 <tr>
-                                     <c:choose>
-                                         <c:when test="${row.affiliation==''}">
-                                             <td>Type: -- </td>
-                                         </c:when> 
-                                         <c:otherwise>
-                                             <td>Type: ${row.affiliation}</td>
-                                         </c:otherwise>
-                                     </c:choose>
-
-                                 </tr>
-                                 <tr>
-                                     <c:choose>
-                                         <c:when test="${row.email==''}">
-                                             <td>Mail: -- </td>
-                                         </c:when> 
-                                         <c:otherwise>
-                                             <td>Mail: ${row.email}</td>
-                                         </c:otherwise>
-                                     </c:choose>
-                                 </tr>
-
-                             </c:forEach>
-                                  </table>
-
-                                            </div>
-              </div>
-              </div>
-
-                              <br><br><br>                   
-                              <div normal><form action=" nextjsp.jsp" method="get">
-                                  <select name="select_type">
-                                     <option value="none" selected='true'>Select a Type</option>
-                                     <c:forEach var="row1" items="${result1.rows}">
-                                          <c:choose>
-                                              <c:when test="${row1.Type==0}">
-
-                                                  <option value="${row1.Type}"> ΔΙΠΛΩΜΑΤΙΚΗ</option>
-                                              </c:when>
-                                              <c:when test="${row1.Type==1}">
-
-                                                  <option value="${row1.Type}"> ΜΕΤΑΠΤΥΧΙΑΚH</option>
-                                              </c:when>
-                                              <c:when test="${row1.Type==2}">
-
-                                                  <option value="${row1.Type}"> ΔΙΔΑΚΤΟΡΙΚH</option>
-                                              </c:when>
-                                          </c:choose>
-
-                                     </c:forEach>
-                                 </select>
-                                  <select name="select_year">
-                                     <option value="none" selected='true'>Select a Year</option>
-                                     <c:forEach var="row1" items="${result2.rows}">
-                                              <option value="${row1.Year}">${row1.Year}</option>
-                                     </c:forEach>
-                                 </select> 
-                                      <select name="select_department">
-                                     <option value="none" selected='true'>Select a Department</option>
-                                     <c:forEach var="row1" items="${result3.rows}">
-                                              <option value="${row1.Department}">${row1.Department}</option>
-                                     </c:forEach>
-                                 </select>
-                                      <select name="select_tname">
-                                     <option value="none" selected='true'>Select a Teacher</option>
-                                     <c:forEach var="row1" items="${result4.rows}">
-                                              <option value="${row1.TName}">${row1.TName}</option>
-                                     </c:forEach>
-                                 </select>  
-
-                               <br><br><br><br><br><br><br>    
-                              <button type="submit" class="submit">Submit</button>    
-                              </form>
-                              </div>
-                              <br>
-                              <h2>Hello</h2>                
-              <form action="logout.do" method="get">
-
-                      <button type="submit" class="submit">Log out</button>
-
-                      <a href="edit.jsp">Edit</a>
-                      <%=username%>
-                      <%=user%>
-
-
-              </form> --%>
-                                  <script type='text/javascript'>
-                                    $('.selectpicker').selectpicker({
-                                    style: 'btn-info',
-                                    size: 4
-                                    });
-                                  </script>
-                                  
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
 </body> 
 </html>

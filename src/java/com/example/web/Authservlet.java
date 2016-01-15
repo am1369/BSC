@@ -38,30 +38,26 @@ public class Authservlet extends HttpServlet {
             return atr.get("uid").toString().replace("uid: ", "");
         return "Not authenticated";
     }
-    
     public String getAffiliation(){
         if(auth)
             return atr.get("eduPersonAffiliation").toString().replace("eduPersonAffiliation: ", "");
         return "Not authenticated";
     }
-    
     public String getMail(){
         if(auth)
             return atr.get("mail").toString().replace("mail: ", "");
         return "Not authenticated";
     }
-    
-    static void printAttrs(Attributes attrs) {
+    //Testing the LDAP -> get all the attributes 
+    /*static void printAttrs(Attributes attrs) {
     if (attrs == null) {
       System.out.println("No attributes");
     } else {
-      /* Print each attribute */
       try {
         for (NamingEnumeration ae = attrs.getAll(); ae.hasMore();) {
           Attribute attr = (Attribute) ae.next();
           System.out.println("attribute: " + attr.getID());
 
-          /* print each value */
           for (NamingEnumeration e = attr.getAll(); e.hasMore(); ){
               System.out.println("value: " + e.next());
           }
@@ -69,14 +65,13 @@ public class Authservlet extends HttpServlet {
       }catch (NamingException e) {
         e.printStackTrace();
       }
-  }
-}
+    }
+    }*/
 
-
-    //DETAILS OF MY DB
+    //The details of my db
     private final static String DB = "jdbc:mysql://localhost:3306/bscfinder_db";
     private final static String DBUSER = "root";
-    private final static String DBPSW = "kosmima";
+    private final static String DBPSW = "k0sm1m@6256";
     
     public static boolean auth = false;
     private  Attributes atr;
@@ -86,8 +81,8 @@ public class Authservlet extends HttpServlet {
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
-    //ResultSet rs1 = null;
     
+    //A filter for encoding UTF-8
     /*protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -101,12 +96,14 @@ public class Authservlet extends HttpServlet {
             HttpServletResponse response)
             throws IOException, ServletException {
             String user = "", pass = "";
-            //connect to my database
+            
+            //Connection to my db with the details above
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 conn = DriverManager.getConnection(DB, DBUSER, DBPSW);
                 
-                user = request.getParameter("uname");
+                //get from the input username and password
+                user = request.getParameter("username");
                 pass = request.getParameter("pass");
 
                 // Set up ldap environment
@@ -119,16 +116,10 @@ public class Authservlet extends HttpServlet {
                 env.put(Context.SECURITY_CREDENTIALS, pass);
 
                 DirContext ctx = new InitialDirContext(env);
-                
                 atr = ctx.getAttributes("uid=" + user + ", ou=People, dc=uth, dc=gr");
+                
+                //if you are in the db of the LDAP set auth-flag=true
                 auth=true;
-                
-                //System.out.println(ctx.getEnvironment());
-                //Attributes answer = ctx.getAttributes("uid=makosmid,ou=people,dc=uth,dc=gr");
-                
-                //printAttrs(answer);
-                
-                //System.out.println(ctx.getAttributes("uid=makosmid,ou=people,dc=uth,dc=gr").get("eduPersonAffiliation"));
                
                 ctx.close();
                 
@@ -139,128 +130,125 @@ public class Authservlet extends HttpServlet {
                 //Logger.getLogger(Authservlet.class.getName()).log(Level.SEVERE, null, ex);
                 auth=false;
             }
-            
-        //get the username and password from the index.jsp-input
-        //request.setCharacterEncoding("UTF-8");
-        
-            //get the username and password from the index.jsp-input
-            //request.setCharacterEncoding("UTF-8");
-          
-            //System.out.println("telos\n");
             PrintWriter out = response.getWriter();
             out.println("<html><body>Auth: "+auth+"\n</body></html>");
             out.println("<html><body>Name: "+getName()+"\n</body></html>");
             out.println("<html><body>Type: "+getAffiliation()+"\n</body></html>");
             out.println("<html><body>Mail: "+getMail()+"\n</body></html>");
             
+            //If authentication from LDAP is true
             if (auth){
-             
-                try {
-                    stmt = conn.createStatement();
-                    
-                    
-                    //db query for current user
-                    rs = stmt.executeQuery("SELECT * FROM bsctable WHERE username='" + user + "'");
-                    //rs = stmt.executeQuery("SELECT * FROM projects ");
-                    
-                    //HttpSession session;
-                    
-                    
-                    if (rs.next()){ //uparxei sti basi mou
                         String name = getName();
                         String affil = getAffiliation();
                         String mail = getMail();
-                        
-                        out.println("<html><body>The user exists "+getName()+"\n</body></html>");
+             
+                try {
+                    stmt = conn.createStatement();
+                    //db query for current user
+                    rs = stmt.executeQuery("SELECT * FROM bsctable WHERE username='" + user + "'");
+                    
+                    //If the user exists already in my db
+                    if (rs.next()){ 
+                        out.println("<html><body>The user "+getName()+"exists\n</body></html>");
                      
-                        //DELETE DATA FROM DB
+                        //Delete data from my db
                         /*pstmt = conn.prepareStatement("DELETE FROM bsctable WHERE id=2");
                         pstmt.executeUpdate();
                         pstmt.close();*/
                         
+                        //Open a session from HttpSession
                         session = request.getSession();
-                        //setting session to expiry in 30 mins
+                        //setting session to expiry in 30 mins or in 30*60 sec
                         session.setMaxInactiveInterval(30*60);
+                        //Create a cookie for the username so as to expire in 30 min if the page is inactive
                         Cookie userName = new Cookie("user", user);
                         userName.setMaxAge(30*60);
                         response.addCookie(userName);
-                        //response.sendRedirect("response.jsp");
                         
+                        //username is the username from my db
                         String username = rs.getString("username");
                         
-                        //request.setAttribute("rs", rs);
-                        //request.setAttribute("rs1", rs1);
-                        //request.setAttribute("username", username);
                         session.setAttribute("user", user);
                         session.setAttribute("cn", name);
                         session.setAttribute("mail", mail);
                         session.setAttribute("eduPersonAffiliation", affil);
                         session.setAttribute("username",username);
                         
+                        //If the user is teacher go to the Teacher's Page
                                 if(user.equals("makosmid")){
                                     response.sendRedirect("responsetwo.jsp");
                                    //request.setCharacterEncoding("UTF-8");
-                                   //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);
-                                   
+                                   //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);  
                                 }
+                        //If the user is student go to the Student's Page
                                 else{
                                     response.sendRedirect("response.jsp");
                                     //request.setCharacterEncoding("UTF-8");            
                                     //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
                                     //view.forward(request, response);
                                 }
-                       
-          
+                                
                         session.setAttribute("user", user);
-                        session.setAttribute("cn;lang=el", name);
+                        session.setAttribute("cn", name);
                         session.setAttribute("mail", mail);
                         session.setAttribute("eduPersonAffiliation", affil);
-                        session.setAttribute("username",username);
-                        
-                        //session.setAttribute("rs",rs);
-                        //String username = rs.getString("username");   
+                        session.setAttribute("username",username);  
                     }
-                    else{ 
-                        //den uparxei sti basi mou
-                        String name = getName();
-                        String affil = getAffiliation();
-                        String mail = getMail();
-                     
+                    //The user doesn't exist in my db, so insert the data to it
+                    else{
                         out.println("<html><body>Insert the user "+name+"\n</body></html>");
                         
+                        //Open a session from HttpSession
                         session = request.getSession();
-                        //setting session to expiry in 30 mins
+                        //setting session to expiry in 30 mins or 30*60 sec
                         session.setMaxInactiveInterval(30*60);
+                        //Create a cookie for the username so as to expire in 30 min if the page is inactive
                         Cookie userName = new Cookie("user", user);
                         userName.setMaxAge(30*60);
                         response.addCookie(userName);
                         
-                        pstmt = conn.prepareStatement("INSERT INTO bsctable(username, affiliation, email) VALUES (?,?,?)");
+                        //Insert query
+                        pstmt = conn.prepareStatement("INSERT INTO bsctable(username, affiliation, email, name) VALUES (?,?,?,?)");
                         pstmt.setString(1, user);
                         pstmt.setString(2, affil);
                         pstmt.setString(3, mail);
+                        pstmt.setString(4,name);
                         pstmt.executeUpdate();
                         pstmt.close();
-                        
-                        RequestDispatcher view = request.getRequestDispatcher("response.jsp");
-                        view.forward(request, response);
                         
                         session.setAttribute("user", user);
                         session.setAttribute("cn", name);
                         session.setAttribute("mail", mail);
                         session.setAttribute("eduPersonAffiliation", affil);
-                        //String username = rs.getString("username");    
+                        
+                        //If the user is teacher go to the Teacher's Page
+                        if(user.equals("makosmid")){
+                                    response.sendRedirect("responsetwo.jsp");
+                                   //request.setCharacterEncoding("UTF-8");
+                                   //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);
+                        }
+                        //If the user is student go to the Student's Page
+                        else{
+                            response.sendRedirect("response.jsp");
+                            //request.setCharacterEncoding("UTF-8");            
+                            //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
+                            //view.forward(request, response);
+                        }
+                        
+                        session.setAttribute("user", user);
+                        session.setAttribute("cn", name);
+                        session.setAttribute("mail", mail);
+                        session.setAttribute("eduPersonAffiliation", affil);    
                     }
-                    // RequestDispatcher view = request.getRequestDispatcher("response.jsp");
-                    // view.forward(request, response);
-                    
                 } catch (SQLException ex) {
                     System.out.println("exception to login");
                     Logger.getLogger(Authservlet.class.getName()).log(Level.SEVERE, null, ex);
                     
                 }
             }
+            //If authentication from LDAP is false
             else{
+                //Message for incorrect username or password
                 request.setAttribute("error","Invalid Username or Password\n" 
                                             +"Please, try again!");
                 RequestDispatcher view = request.getRequestDispatcher("index.jsp");

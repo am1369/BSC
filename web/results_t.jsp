@@ -1,5 +1,5 @@
 <%-- 
-    Document   : results_s
+    Document   : results_t
     Created on : Jan 7, 2016, 9:27:32 PM
     Author     : kosmima
 --%>
@@ -23,7 +23,7 @@
     <!--[if IE]>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <![endif]-->
-    <title>Teacher's Profile</title>
+    <title>Teacher's Results</title>
     <!-- BOOTSTRAP STYLE SHEET -->
     <link href="css/assets/css/bootstrap.css" rel="stylesheet" />
     <!-- FONT-AWESOME STYLE SHEET FOR BEAUTIFUL ICONS -->
@@ -32,7 +32,7 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway:300,200' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/animate.css">  
 </head>
-<body> 
+<body>  
     <%
             if (session.getAttribute("user") == null) {
                 response.sendRedirect("index.jsp");
@@ -80,12 +80,12 @@
                AND s.TName = '${param.select_tname}'
         </c:if>
     </sql:query>
-        <div class="container">
+    <div class="container">
             <!-- Fixed navbar -->
             <nav class="navbar navbar-inverse navbar-fixed-top">
               <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="response.jsp"><strong>Profile</strong></a>
+                    <a class="navbar-brand" href="responsetwo.jsp"><strong>Profile</strong></a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                   <ul class="nav navbar-nav navbar-right">
@@ -102,9 +102,7 @@
                     <h2 align="center" style="font-size: 250%;color: white;">The results are:</h2>
                     <br>
                     <div class="col-lg-offset-0">
-                        <form action='do.student' method='post'>
                         <div class="alert alert-info">
-                            
                             <table>
                             <tbody>   
                             <c:forEach var="row2" items="${result.rows}">
@@ -130,7 +128,6 @@
                                             </c:otherwise>
                                 </c:choose>
                                 </tr>
-                                
                                 <tr>
                                 <c:choose>
                                             <c:when test="${not empty row2.Info}">
@@ -162,7 +159,6 @@
                                                 <td><strong>Student's Name: </strong> -- </td>
                                             </c:otherwise>
                                 </c:choose>
-                                <td><label style="color:graytext;"><input type="checkbox" name="check" value="${row2.Id}" >Check <br></label></td>
                                 </tr>
                                 
                             </c:forEach>
@@ -174,9 +170,7 @@
                             <br>
                         <!-- <a href="responsetwo.jsp">Go Back</a> -->
                         </div>
-                            <button type="submit" class="btn btn-group-justified">Submit</button>
-                        </form>
-                        <!--<button onclick="goBack()" class="btn btn-primary">Go Back</button>-->
+                        <!--<button onclick="goBack()" class="btn btn-group-justified"><strong>Go Back</strong></button>-->
                         <br>
                         <%--<form action="logout.do" method="get">
                             <button type="submit" class="submit">Log out</button>
@@ -191,6 +185,7 @@
             //(window).bind("pageshow", function() { // update hidden input field $('#formid')[0].reset(); });
             }
         </script>
+        
         <footer class="footer" style="color: graytext;">
         <div class="container">
         <p class="pull-right"><a href="#" style="color: white;">Back to top</a></p>
