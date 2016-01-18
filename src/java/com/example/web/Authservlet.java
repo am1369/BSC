@@ -158,11 +158,11 @@ public class Authservlet extends HttpServlet {
                         
                         //Open a session from HttpSession
                         session = request.getSession();
-                        //setting session to expiry in 30 mins or in 30*60 sec
-                        session.setMaxInactiveInterval(30*60);
-                        //Create a cookie for the username so as to expire in 30 min if the page is inactive
+                        //setting session to expiry in 5 mins or in 5*60 sec
+                        session.setMaxInactiveInterval(5*60);
+                        //Create a cookie for the username so as to expire in 5 min if the page is inactive
                         Cookie userName = new Cookie("user", user);
-                        userName.setMaxAge(30*60);
+                        userName.setMaxAge(5*60);
                         response.addCookie(userName);
                         
                         //username is the username from my db
@@ -175,14 +175,15 @@ public class Authservlet extends HttpServlet {
                         session.setAttribute("username",username);
                         
                         //If the user is teacher go to the Teacher's Page
-                                if(user.equals("makosmid")){
-                                    response.sendRedirect("responsetwo.jsp");
+                                //if(user.equals("makosmid")){
+                                  if(affil.equals("student")){
+                                    response.sendRedirect("response.jsp");
                                    //request.setCharacterEncoding("UTF-8");
                                    //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);  
                                 }
                         //If the user is student go to the Student's Page
                                 else{
-                                    response.sendRedirect("response.jsp");
+                                    response.sendRedirect("responsetwo.jsp");
                                     //request.setCharacterEncoding("UTF-8");            
                                     //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
                                     //view.forward(request, response);
@@ -200,11 +201,11 @@ public class Authservlet extends HttpServlet {
                         
                         //Open a session from HttpSession
                         session = request.getSession();
-                        //setting session to expiry in 30 mins or 30*60 sec
-                        session.setMaxInactiveInterval(30*60);
-                        //Create a cookie for the username so as to expire in 30 min if the page is inactive
+                        //setting session to expiry in 5 mins or 5*60 sec
+                        session.setMaxInactiveInterval(5*60);
+                        //Create a cookie for the username so as to expire in 5 min if the page is inactive
                         Cookie userName = new Cookie("user", user);
-                        userName.setMaxAge(30*60);
+                        userName.setMaxAge(5*60);
                         response.addCookie(userName);
                         
                         //Insert query
@@ -222,14 +223,15 @@ public class Authservlet extends HttpServlet {
                         session.setAttribute("eduPersonAffiliation", affil);
                         
                         //If the user is teacher go to the Teacher's Page
-                        if(user.equals("makosmid")){
-                                    response.sendRedirect("responsetwo.jsp");
+                        //if(user.equals("makosmid")){
+                        if(affil.equals("student")){
+                                    response.sendRedirect("response.jsp");
                                    //request.setCharacterEncoding("UTF-8");
                                    //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);
                         }
                         //If the user is student go to the Student's Page
                         else{
-                            response.sendRedirect("response.jsp");
+                            response.sendRedirect("responsetwo.jsp");
                             //request.setCharacterEncoding("UTF-8");            
                             //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
                             //view.forward(request, response);

@@ -96,6 +96,12 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="responsetwo.jsp"><strong>Profile</strong></a>
             </div>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group-sm">
+                  <input type="text" class="form-control" placeholder="Search">
+                  <button type="submit" class="btn btn-sm">Go</button>
+                </div>
+            </form>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="logout.do">Log out <span class="sr-only">(current)</span></a></li>

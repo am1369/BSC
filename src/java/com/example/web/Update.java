@@ -54,6 +54,8 @@ public class Update extends HttpServlet{
                 Logger.getLogger(Authservlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         String myusername = (String) session.getAttribute("user");
+        //String affil = (String) session.getAttribute("affil");
+        String affiliation = (String) session.getAttribute("eduPersonAffiliation");
         
         // Execute SQL query
         try {
@@ -72,10 +74,8 @@ public class Update extends HttpServlet{
                                     out.println("<html><body>Mail from sql: "+mailsql+"\n</body></html>");
                                     out.println("<html><body>Department from sql: "+departmentsql+"\n</body></html>");
                                     
-                                    String affiliation = (String) session.getAttribute("eduPersonAffiliation");
-                                    out.println("<html><body>Affil: "+affiliation+"\n</body></html>");
                                     //if(affiliation.equals("student")){
-                                    if(myusername.equals("pkoutsovasilis")){
+                                    if(affiliation.equals("student")){
                                             request.setCharacterEncoding("UTF-8");
                                             String namenew = request.getParameter("name");
                                             String mailnew = request.getParameter("mail");
@@ -87,6 +87,7 @@ public class Update extends HttpServlet{
                                             out.println("<html><body>Year: "+yearnew+"\n</body></html>");
                                             out.println("<html><body>Mail: "+mailnew+"\n</body></html>");
                                             out.println("<html><body>Department: "+departmentnew+"\n</body></html>");
+                                            out.println("<html><body>Affil: "+affiliation+"\n</body></html>");
 
                                             pstmt = conn.prepareStatement("UPDATE bsctable SET email=?, name=?, department=?, year=? WHERE username=? " );
                                             pstmt.setString(1, mailnew =="" ? mailsql : mailnew );
@@ -115,6 +116,7 @@ public class Update extends HttpServlet{
                                             out.println("<html><body>Name: "+namenew+"\n</body></html>");
                                             out.println("<html><body>Mail: "+mailnew+"\n</body></html>");
                                             out.println("<html><body>Department: "+departmentnew+"\n</body></html>");
+                                            out.println("<html><body>Affil: "+affiliation+"\n</body></html>");
                                             
                                             pstmt = conn.prepareStatement("UPDATE bsctable SET email=?, name=?, department=? WHERE username=? " );
                                             pstmt.setString(1, mailnew =="" ? mailsql : mailnew );
@@ -144,26 +146,14 @@ public class Update extends HttpServlet{
         }
         //Message for the successfully update of data
         session.setAttribute("update","Your info are updated" );
-        
-        /*if(affiliation.equals("student")){
+        //if(myusername.equals("makosmid")){
+        if(affiliation.equals("student")){   
             response.sendRedirect("response.jsp");
            //request.setCharacterEncoding("UTF-8");
            //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);
                                    
         }else{
             response.sendRedirect("responsetwo.jsp");
-            //request.setCharacterEncoding("UTF-8");            
-            //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
-            //view.forward(request, response);
-        }*/
-        if(myusername.equals("makosmid")){
-            
-            response.sendRedirect("responsetwo.jsp");
-           //request.setCharacterEncoding("UTF-8");
-           //request.getRequestDispatcher("responsetwo.jsp").forward(request, response);
-                                   
-        }else{
-            response.sendRedirect("response.jsp");
             //request.setCharacterEncoding("UTF-8");            
             //RequestDispatcher view = request.getRequestDispatcher("response.jsp");
             //view.forward(request, response);

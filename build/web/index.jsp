@@ -26,11 +26,11 @@
 <%
     //invalidate the session if exists
     //session = request.getSession(false);
-    //if((session.getAttribute("user") == "makosmid")){
-       /* response.sendRedirect("responsetwo.jsp");
+    //if((session.getAttribute("affil") == "student")){
+       /* response.sendRedirect("response.jsp");
     }
     if((session.getAttribute("user") != null)){
-        response.sendRedirect("response.jsp");
+        response.sendRedirect("responsetwo.jsp");
     }*/
 
     //no session? clear cookies
@@ -67,7 +67,8 @@
             <button type="reset" class="submit">Reset</button>
             </div>
             <br><br>
-        </form> 
+        </form>
+        
     </div> <!-- /container -->
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

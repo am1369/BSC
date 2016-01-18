@@ -90,12 +90,18 @@
         <nav class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
-                <% if(user.equals("pkoutsovasilis")){%>
+                <% if(affil.equals("student")){%>
                     <a class="navbar-brand" href="response.jsp"><strong>Profile</strong></a>
                 <%}else{%>
                     <a class="navbar-brand" href="responsetwo.jsp"><strong>Profile</strong></a>
                 <% }%>
             </div>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group-sm">
+                  <input type="text" class="form-control" placeholder="Search">
+                  <button type="submit" class="btn btn-sm">Go</button>
+                </div>
+                </form>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="logout.do">Log out <span class="sr-only">(current)</span></a></li>
@@ -119,7 +125,7 @@
                         <label style="color: graytext;">Change your mail </label>
                         <input type="text" class="form-control" id="input" name="mail" placeholder="E-mail" value=""/>
                         <br>
-                        <% if(user.equals("pkoutsovasilis")){%>
+                        <% if(affil.equals("student")){%>
                             <label style="color: graytext;">Confirm the year of starting your courses </label>
                             <input type="number" class="form-control" id="input"name="year" min="2006" max="" placeholder="Year" value="" required/>
                             <br>
